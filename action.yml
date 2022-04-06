@@ -3,9 +3,6 @@ author: aftertale
 description: just a test
 outputs:
   envs:
-    description: the envs
-outputs:
-  environment:
     description: "All the environment vars"
   payload:
     description: "The context of the event that triggered the workflow"
