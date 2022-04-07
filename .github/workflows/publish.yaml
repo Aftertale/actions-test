@@ -28,6 +28,6 @@ jobs:
           tagArr=(${tag//./ })
 
           git tag -fa "v${tagArr[0]}" -m "v${tagArr[0]}"
-          git tag -fa "v${tag[0]}.${tag[1]}" -m "v${tagArr[0]}.${tagArr[1]}"
-          git tag -fa "v${tag[0]}.${tag[1]}.${tag[2]}" -m "v${tag[0]}.${tag[1]}.${tag[2]}"
+          git tag -fa "v${tagArr[0]}.${tagArr[1]}" -m "v${tagArr[0]}.${tagArr[1]}"
+          git tag -fa "v${tagArr[0]}.${tagArr[1]}.${tagArr[2]}" -m "v${tagArr[0]}.${tagArr[1]}.${tagArr[2]}"
           git push -f --tags
