@@ -28,6 +28,9 @@ while MSG= read -r line; do
 		feat*) 
                   [[ $chglevel -le 2 ]] && chglevel=2
                   ;;
+                *)
+                  echo "unknown change-type. Illegal!"
+                  exit 1
         esac
 done <<< "$msgs"
 
