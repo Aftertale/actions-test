@@ -13,17 +13,23 @@ then
 fi
 
 msgs=$(git log --format=%B $(git tag 2>/dev/null| tail -n 1)..HEAD)
-
+echo $msgs
 chglevel=0
 while MSG= read -r line; do
 	msg=`expr "$line" : '^\(.*\):.*'`
+        echo $msg
 	case $msg in
+                '')
+                  ;;
                 *\!) 
-                  chglevel=3;;
+                  chglevel=3
+                  ;;
 		fix*) 
-                  [[ $chglevel -le 1 ]] && chglevel=1;;
+                  [[ $chglevel -le 1 ]] && chglevel=1
+                  ;;
 		feat*) 
-                  [[ $chglevel -le 2 ]] && chglevel=2;;
+                  [[ $chglevel -le 2 ]] && chglevel=2
+                  ;;
         esac
 done <<< "$msgs"
 
