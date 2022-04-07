@@ -13,6 +13,8 @@ jobs:
       - name: AutoIncrement Version
         id: version
         run: |
+          git config --global user.email "djmcdowell81@gmail.com"
+          git config --global user.name "Dillon McDowell"
           echo "::set-output name=new_tag::$(./.github/scripts/nextversion.sh)"
 
       - name: Tag with new version
