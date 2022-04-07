@@ -18,13 +18,13 @@ chglevel=0
 while MSG= read -r line; do
 	msg=`expr "$line" : '^\(.*\):.*'`
 	case $msg in
-		fix) 
-                  [[ $chglevel -le 1 ]] && chglevel=1;;
-		feat) 
-                  [[ $chglevel -le 2 ]] && chglevel=2;;
-		*\!) 
+                *\!) 
                   chglevel=3;;
-	esac
+		fix*) 
+                  [[ $chglevel -le 1 ]] && chglevel=1;;
+		feat*) 
+                  [[ $chglevel -le 2 ]] && chglevel=2;;
+        esac
 done <<< "$msgs"
 
 
