@@ -13,11 +13,9 @@ then
 fi
 
 msgs=$(git log --format=%B $(git tag 2>/dev/null| tail -n 1)..HEAD)
-echo $msgs
 chglevel=0
 while MSG= read -r line; do
 	msg=`expr "$line" : '^\(.*\):.*'`
-        echo $msg
 	case $msg in
                 '')
                   ;;
