@@ -40,12 +40,12 @@ case "$chglevel" in
     ;;
   2)
     let MINOR+=1
-    let PATCH=0
+    let PATCH=0  
     ;;
   1)
     let PATCH+=1
     ;;
 esac
 
-echo "$MAJOR.$MINOR.$PATCH"
+echo "$chglevel $MAJOR.$MINOR.$PATCH"
 

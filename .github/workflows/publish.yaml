@@ -19,12 +19,15 @@ jobs:
           git config --global user.name "Dillon McDowell"
           git fetch --depth=1 origin +refs/tags/*:refs/tags/*
           rev=$(git rev-list --tags --max-count=1)
-          tag=$(git describe --tags "$rev")
-          echo "$tag"
-          echo "::set-output name=new_tag::$(./.github/scripts/nextversion.sh $tag)"
-
+          tag=$(git describe --tags "$rev" | sed 's/v//g')
+          new_version_w_changes=($(./.github/scripts/nextversion.sh $tag))
+          echo "::set-output name=new_tag::${new_version_with_changes}"
       - name: Tag with new version
-
         run: |
-          git tag -a "v${{ steps.version.outputs.new_tag }}" -m "v${{ steps.version.outputs.new_tag }}"
-          git push origin "v${{ steps.version.outputs.new_tag }}"
+          tag=${{ steps.version.outputs.new_tag }}
+          tagArr=(${tag//./ })
+
+          git tag -fa "v${tagArr[0]}" -m "v${tagArr[0]}"
+          git tag -fa "v${tag[0]}.${tag[1]}" -m "v${tagArr[0]}.${tagArr[1]}"
+          git tag -fa "v${tag[0]}.${tag[1]}.${tag[2]}" -m "v${tag[0]}.${tag[1]}.${tag[2]}"
+          git push -f --tags
