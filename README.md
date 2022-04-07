@@ -1,3 +1,3 @@
 # actions-test
-making it dirty!
+cleaning up the ref
 
