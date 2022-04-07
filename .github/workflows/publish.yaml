@@ -10,10 +10,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: get version
-        id: old_version
+      - name: AutoIncrement Version
+        id: version
         run: |
-          echo "::set-output name=old_version::$(git describe)"
-      - name: get changes
-        run: |
+          echo "::set-output name=new_tag::$(./.github/scripts/nextversion.sh)"
 
+      - name: Tag with new version
+        run: |
+          git tag -a "v${{ steps.version.new_tag }}" -m "v${{ steps.version.new_tag }}"
+          git push origin "v${{ steps.version.new_tag }}"
