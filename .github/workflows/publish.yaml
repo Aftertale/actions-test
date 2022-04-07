@@ -21,20 +21,13 @@ jobs:
           rev=$(git rev-list --tags --max-count=1)
           tag=$(git describe --tags "$rev" | sed 's/v//g')
           new_version_w_changes=($(./.github/scripts/nextversion.sh $tag))
-          echo "::set-output name=chglevel::${new_version_with_changes[0]}"
-          echo "::set-output name=new_tag::${new_version_with_changes[1]}"
+          echo "::set-output name=new_tag::${new_version_with_changes}"
       - name: Tag with new version
         run: |
           tag=${{ steps.version.outputs.new_tag }}
           tagArr=(${tag//./ })
-          if [ ${{ steps.version.outputs.chglevel }} = 3 ]
-          then
-            git tag -a "v${tagArr[0]}" -m "v${tagArr[0]}"
-            git tag -a "v${tagArr[0]}.${tagArr[1]}" -m "v${tagArr[0]}.${tagArr[1]}"
-          elif [ ${{ steps.version.outputs.chglevel }} = 2 ]
-          then
-            
-          fi
 
-          git tag -a "v$tag" -m "v$tag"
-
+          git tag -fa "v${tagArr[0]}" -m "v${tagArr[0]}"
+          git tag -fa "v${tag[0]}.${tag[1]}" -m "v${tagArr[0]}.${tagArr[1]}"
+          git tag -fa "v${tag[0]}.${tag[1]}.${tag[2]}" -m "v${tag[0]}.${tag[1]}.${tag[2]}"
+          git push -f --tags
