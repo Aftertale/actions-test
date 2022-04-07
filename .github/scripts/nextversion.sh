@@ -47,5 +47,5 @@ case "$chglevel" in
     ;;
 esac
 
-echo "$chglevel $MAJOR.$MINOR.$PATCH"
+echo "$MAJOR $MINOR $PATCH"
 
