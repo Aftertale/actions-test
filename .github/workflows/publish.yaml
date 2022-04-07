@@ -15,10 +15,10 @@ jobs:
         run: |
           git config --global user.email "djmcdowell81@gmail.com"
           git config --global user.name "Dillon McDowell"
-          git pull
-          tag=$(git tag 2>/dev/null | tail -n 1)
+          rev=$(git rev-list --tags --max-count=1)
+          tag=$(git describe --tags "$rev")
           echo "$tag"
-          echo "::set-output name=new_tag::$(./.github/scripts/nextversion.sh)"
+          echo "::set-output name=new_tag::$(./.github/scripts/nextversion.sh $tag)"
 
       - name: Tag with new version
 
