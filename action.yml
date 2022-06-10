@@ -1,6 +1,13 @@
 name: actions-test
 author: aftertale
 description: just a test
+inputs:
+  gh_token:
+    required: true
+    description: "GitHub Token"
+  prefix:
+    required: false
+    description: "An optional tag prefix, useful for repositories that have multiple tools or services."
 outputs:
   envs:
     description: "All the environment vars"
