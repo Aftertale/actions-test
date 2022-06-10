@@ -1,7 +1,6 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 import { Octokit } from 'octokit';
-import { getCommitsByPullRequest, GitHubCommitResponse, GitHubRepository } from './graphql/queries';
 
 interface tagElement {
   name: string,
@@ -17,16 +16,18 @@ enum ChangeClass {
 
 async function run() {
   try {
+    const prefix = core.getInput('prefix') || '';
     const octokit = github.getOctokit(core.getInput('token'));
     const repo = github.context.repo;
     const latestTag = await getLatestTag(octokit, repo);
+    github.context.eventName
 
     const mainCommits = await getCommits(octokit, repo, 'refs/heads/main'); 
     const branchCommits = await getCommits(octokit, repo, github.context.ref)
-    const newCommits = branchCommits.filter(commit => mainCommits.indexOf(commit) < 0);
-    const newCommitMessages = branchCommits.slice(0, branchCommits.findIndex(x => x.sha === latestTag?.sha || null)).map(commit => commit.commit.message);
+    const newCommits = branchCommits.filter(bc => mainCommits.find(mc => mc.sha === bc.sha) === undefined);
+    //const newCommitMessages = newCommits.slice(0, branchCommits.findIndex(x => x.sha === latestTag?.sha || null)).map(commit => commit.commit.message);
     let changeLevel = ChangeClass.None;
-    for (const commit of newCommitMessages) {
+    for (const commit of newCommits.map(c => c.message)) {
       const change = getChangeLevel(commit);
       if (change > changeLevel) {
         changeLevel = change;
@@ -46,6 +47,19 @@ run();
 // Get list of commits from main and from feature branch.
 // Get commit title for each commit that doesn't already appear in main.
 // Get class of most significant change.
+
+async function processPushEvent(octokit: Octokit, event: { ref: string, after: string, repository: { owner: string, repo: string } }) {
+  const { data: commits } = await octokit.rest.repos.listCommits({...event.repository, ref: event.ref});
+  const newCommits = commits.filter(commit => commit.sha === event.after);
+  const newCommitMessages = newCommits.map(commit => commit.commit.message);
+  const changeLevel = getChangeLevel(newCommitMessages[0]);
+  const latestTag = await getLatestTag(octokit, event.repository);
+  const latestTagCommit = commits.find(commit => commit.sha === latestTag.sha);
+  const latestTagMessage = latestTagCommit ? latestTagCommit.commit.message : '';
+  const latestTagChangeLevel = getChangeLevel(latestTagMessage);
+  const latestTagChangeClass = latestTagChangeLevel > changeLevel ? latestTagChangeLevel : changeLevel;
+  const latestTagChangeClassName = latestTagChangeClass === ChangeClass.Major ? 'major' : latestTagChangeClass === ChangeClass.Minor ? 'minor' : 'patch';
+}
 
 async function getCommits(octokit: any, repo: { owner: string, repo: string }, ref: string) {
   const { data: commits } = await octokit.rest.repos.listCommits({...repo, ref});
